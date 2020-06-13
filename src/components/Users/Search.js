@@ -1,60 +1,53 @@
-import React, { Component } from "react";
+import React, { useState, useContext } from "react";
 import PropTypes from "prop-types";
+import GithubContext from "../../context/github/githubContext";
 
-class Search extends Component {
-  state = {
-    text: "",
+const Search = ({ setAlert }) => {
+  const githubContext = useContext(GithubContext);
+
+  const [text, setText] = useState("");
+
+  const handleChange = (e) => setText(e.target.value);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (text === "") {
+      setAlert("Please search a valid name", "light");
+    } else {
+      githubContext.searchUsers(text);
+      setText(text);
+    }
   };
 
-  static propTypes = {
-    searchUsers: PropTypes.func.isRequired,
-    clearUsers: PropTypes.func.isRequired,
-    showClear: PropTypes.bool.isRequired,
-    setAlert: PropTypes.func.isRequired,
-  };
+  return (
+    <div>
+      <form onSubmit={handleSubmit} className="form">
+        <input
+          type="text"
+          name="text"
+          placeholder="Search user here"
+          value={text}
+          onChange={handleChange}
+        />
+        <button className="btn waves-effect waves-light" type="submit">
+          Search
+          <i className="material-icons right">search</i>
+        </button>
+      </form>
+      {githubContext.users.length > 0 && (
+        <button
+          className="btn waves-effect waves-light btn-large"
+          onClick={githubContext.clearUsers}
+        >
+          Clear
+          <i className="material-icons right">delete</i>
+        </button>
+      )}
+    </div>
+  );
+};
 
-  render() {
-    const handleChange = (e) => {
-      this.setState({ [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      if (this.state.text === "") {
-        this.props.setAlert("Please search a valid name", "light");
-      } else {
-        this.props.searchUsers(this.state.text);
-        this.setState({ text: "" });
-      }
-    };
-
-    return (
-      <div>
-        <form onSubmit={handleSubmit} className="form">
-          <input
-            type="text"
-            name="text"
-            placeholder="Search user here"
-            value={this.state.text}
-            onChange={handleChange}
-          />
-          <button className="btn waves-effect waves-light" type="submit">
-            Search
-            <i className="material-icons right">search</i>
-          </button>
-        </form>
-        {this.props.showClear && (
-          <button
-            className="btn waves-effect waves-light btn-large"
-            onClick={this.props.clearUsers}
-          >
-            Clear
-            <i className="material-icons right">delete</i>
-          </button>
-        )}
-      </div>
-    );
-  }
-}
-
+Search.propTypes = {
+  setAlert: PropTypes.func.isRequired,
+};
 export default Search;

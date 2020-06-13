@@ -1,72 +1,32 @@
-import React, { Component, Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Nav from "./components/layout/Nav";
-import UserItem from "./components/Users/UserItem";
 import Slider from "./Slider";
 import Users from "./components/Users/Users";
 import User from "./components/Users/User";
 import Alert from "./components/layout/Alert";
 import About from "./components/pages/About";
-
-import axios from "axios";
 import Search from "./components/Users/Search";
+import GithubState from "./context/github/GithubState";
 
-class App extends Component {
-  state = {
-    users: [],
-    user: {},
-    repos: [],
-    loading: false,
-    alert: null,
-  };
-
-  //search github users
-  searchUsers = async (text) => {
-    this.setState({ loading: true });
-    const res = await axios.get(
-      `https://api.github.com/search/users?q=${text}&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_id=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
-    );
-    this.setState({ users: res.data.items, loading: false });
-  };
-
-  //single user
-  getUser = async (username) => {
-    this.setState({ loading: true });
-    const res = await axios.get(
-      `https://api.github.com/users/${username}?&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_id=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
-    );
-    this.setState({ user: res.data, loading: false });
-  };
-
-  //get user repos
-  getUserRepos = async (username) => {
-    this.setState({ loading: true });
-    const res = await axios.get(
-      `https://api.github.com/users/${username}/repos?per_page=5&sort=created:asc&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_id=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
-    );
-    this.setState({ repos: res.data, loading: false });
-  };
-
-  clearUsers = () => {
-    this.setState({ users: [], loading: false });
-  };
+const App = () => {
+  const [alert, setAlert] = useState(null);
 
   // set alert
-  setAlert = (msg, type) => {
-    this.setState({ alert: { msg, type } });
+  const showAlert = (msg, type) => {
+    setAlert({ msg, type });
 
-    setTimeout(() => this.setState({ alert: null }), 3000);
+    setTimeout(() => setAlert(null), 3000);
   };
 
-  render() {
-    const { users, user, loading, repos } = this.state;
-    return (
+  return (
+    <GithubState>
       <Router>
         <div>
           <Nav />
 
           <div className="container">
-            <Alert alert={this.state.alert} />
+            <Alert alert={alert} />
             <Switch>
               <Route
                 exact
@@ -74,37 +34,19 @@ class App extends Component {
                 render={(props) => (
                   <Fragment>
                     <Slider />
-                    <Search
-                      searchUsers={this.searchUsers}
-                      clearUsers={this.clearUsers}
-                      showClear={users.length > 0 ? true : false}
-                      setAlert={this.setAlert}
-                    />
-                    <Users loading={loading} users={users} />
+                    <Search setAlert={showAlert} />
+                    <Users />
                   </Fragment>
                 )}
               />
               <Route exact path="/about" component={About} />
-              <Route
-                exact
-                path="/user/:login"
-                render={(props) => (
-                  <User
-                    {...props}
-                    getUser={this.getUser}
-                    getUserRepos={this.getUserRepos}
-                    user={user}
-                    repos={repos}
-                    loading={loading}
-                  />
-                )}
-              />
+              <Route exact path="/user/:login" component={User} />
             </Switch>
           </div>
         </div>
       </Router>
-    );
-  }
-}
+    </GithubState>
+  );
+};
 
 export default App;
