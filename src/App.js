@@ -7,7 +7,6 @@ import Alert from "./components/layout/Alert";
 import Home from "./components/pages/Home";
 import About from "./components/pages/About";
 import NotFound from "./components/pages/NotFound";
-
 import GithubState from "./context/github/GithubState";
 import AlertState from "./context/alert/AlertState";
 
@@ -16,7 +15,7 @@ const App = () => {
     <GithubState>
       <AlertState>
         <Router>
-          <div>
+          <div className="App">
             <Nav />
             <div className="container">
               <Alert />

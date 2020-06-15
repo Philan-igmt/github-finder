@@ -4,14 +4,14 @@ class Slider extends Component {
   componentDidMount() {
     const M = window.M;
     document.addEventListener("DOMContentLoaded", function () {
-      var elems = document.querySelectorAll(".slider");
-      var instances = M.Slider.init(elems, {});
+      let elems = document.querySelectorAll(".slider");
+      let instances = M.Slider.init(elems, {});
     });
   }
 
   render() {
     return (
-      <div className="slider">
+      <div className="slider" style={{ minHeight: "30vh" }}>
         <ul className="slides">
           <li>
             <img src="https://149367133.v2.pressablecdn.com/wp-content/uploads/2018/06/github-logo-microsoft.jpg" />

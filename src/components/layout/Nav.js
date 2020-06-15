@@ -29,11 +29,11 @@ class Nav extends Component {
             {this.props.tittle}
           </h2>
           <ul>
-            <li className="waves-effect waves-light  btn">
+            <li className="waves-effect waves-light  btn pink ">
               <i className="large material-icons left">home</i>
               <Link to="/">Home</Link>
             </li>
-            <li className="btn">
+            <li className="btn yellow">
               <i className="large material-icons left">info</i>
               <Link to="/about">About</Link>
             </li>
